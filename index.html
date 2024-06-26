@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Sand Home by Sandy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f5e6d3;
+            color: #4a4a4a;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        h1 {
+            font-weight: 600;
+            color: #3c3c3c;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 15px 0;
+            border-bottom: 1px solid #d4c3a9;
+            font-size: 1.8rem;
+        }
+        .room-card {
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .room-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        .room-card:hover .room-image {
+            transform: scale(1.05);
+        }
+        .card-body {
+            padding: 1rem;
+            background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+        }
+        .card-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+            color: #3c3c3c;
+        }
+        .card-text {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+        .status-available {
+            color: #4caf50;
+            font-weight: 600;
+        }
+        .status-occupied {
+            color: #f44336;
+            font-weight: 600;
+        }
+        .price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #3c3c3c;
+            margin-top: 0.3rem;
+        }
+        .carousel-inner img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .carousel-indicators {
+            bottom: 0;
+        }
+        .carousel-indicators button {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #fff;
+            opacity: 0.5;
+        }
+        .carousel-indicators .active {
+            opacity: 1;
+        }
+        .form-control, .form-select {
+            border: 1px solid #d4c3a9;
+            font-size: 0.9rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #8d6e63;
+            box-shadow: 0 0 0 0.2rem rgba(141, 110, 99, 0.25);
+        }
+        .card-footer {
+            background-color: transparent;
+            border-top: none;
+            padding-top: 0;
+        }
+        .btn-primary {
+            background-color: #8d6e63;
+            border-color: #8d6e63;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #6d4c41;
+            border-color: #6d4c41;
+        }
+        .location-link {
+            color: #8d6e63;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .location-link:hover {
+            color: #6d4c41;
+            text-decoration: underline;
+        }
+        .btn-admin {
+            background-color: #a1887f;
+            border-color: #a1887f;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .btn-admin:hover {
+            background-color: #8d6e63;
+            border-color: #8d6e63;
+        }
+        @media (max-width: 768px) {
+            .room-card {
+                margin-bottom: 15px;
+            }
+            .room-image {
+                height: 180px;
+            }
+        }
+        .admin-login {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-3 position-relative">
+        <div class="admin-login">
+            <button class="btn btn-admin" data-bs-toggle="modal" data-bs-target="#loginModal">เข้าสู่ระบบ</button>
+        </div>
+        <h1>Little Sand Home by Sandy</h1>
+        <div class="mb-3">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" id="searchInput" class="form-control" placeholder="ค้นหาตามหมายเลขห้อง">
+                </div>
+                <div class="col-md-3">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">สถานะทั้งหมด</option>
+                        <option value="ว่าง">ว่าง</option>
+                        <option value="มีผู้เช่า">มีผู้เช่า</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text">ราคา</span>
+                        <input type="number" id="minPrice" class="form-control" placeholder="ต่ำสุด">
+                        <span class="input-group-text">-</span>
+                        <input type="number" id="maxPrice" class="form-control" placeholder="สูงสุด">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="roomList" class="row"></div>
+    </div>
+
+    <!-- Modal สำหรับแสดงรายละเอียดห้อง -->
+    <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">รายละเอียดห้อง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="roomDetailContent">
+                    <!-- รายละเอียดห้องจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal สำหรับ Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เข้าสู่ระบบผู้ดูแล</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">รหัสผ่าน</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const SHEET_ID = '1a5dN1qvE2EgB7iUOv7MmioytlTLWTa81rgBRbPDfkj8';
+        const SHEET_NAME = 'Sheet1';
+        const SHEET_RANGE = 'A2:N';
+        let roomsData = [];
+
+        function fetchRooms() {
+            const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=${SHEET_RANGE}`;
+            
+            fetch(sheetUrl)
+                .then(response => response.text())
+                .then(data => {
+                    console.log("Raw data:", data);
+                    const jsonData = JSON.parse(data.substring(47).slice(0, -2));
+                    console.log("Parsed data:", jsonData);
+                    if (jsonData.table && jsonData.table.rows) {
+                        roomsData = jsonData.table.rows;
+                        displayRooms(roomsData);
+                    } else {
+                        console.error("Invalid data structure:", jsonData);
+                        document.getElementById('roomList').innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('roomList').innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+                });
+        }
+
+        function displayRooms(rooms) {
+            const roomList = document.getElementById('roomList');
+            roomList.innerHTML = '';
+            
+            rooms.forEach((room, index) => {
+                console.log(`Room ${index + 1}:`, room);
+                
+                const roomNumber = room.c[0] ? room.c[0].v : 'ไม่ระบุ';
+                const price = room.c[1] ? room.c[1].v : 'ไม่ระบุ';
+                const status = room.c[2] ? room.c[2].v : 'ไม่ระบุ';
+                const imageUrls = room.c[3] && room.c[3].v ? room.c[3].v.split(',').map(url => url.trim()) : [];
+                const latitude = room.c[8] ? room.c[8].v : null;
+                const longitude = room.c[9] ? room.c[9].v : null;
+
+                console.log(`Room ${roomNumber} - Image URLs:`, imageUrls);
+
+                const statusClass = status.toLowerCase() === 'ว่าง' ? 'status-available' : 'status-occupied';
+
+                let carouselItems = '';
+                let carouselIndicators = '';
+                if (imageUrls.length > 0) {
+                    imageUrls.forEach((url, i) => {
+                        carouselItems += `
+                            <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                                <img src="${url}" class="d-block w-100 room-image" alt="Room ${roomNumber} Image ${i+1}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Image+Not+Found';">
+                            </div>
+                        `;
+                        carouselIndicators += `
+                            <button type="button" data-bs-target="#carousel${index}" data-bs-slide-to="${i}" ${i === 0 ? 'class="active" aria-current="true"' : ''} aria-label="Slide ${i+1}"></button>
+                        `;
+                    });
+                } else {
+                    carouselItems = `
+                        <div class="carousel-item active">
+                            <img src="https://via.placeholder.com/300x200?text=No+Image" class="d-block w-100 room-image" alt="No Image Available">
+                        </div>
+                    `;
+                }
+
+                const locationLink = latitude && longitude 
+                    ? `<a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank" class="location-link"><i class="fas fa-map-marker-alt"></i> แผนที่</a>`
+                    : '';
+
+                const roomCard = `
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card room-card">
+                            <div id="carousel${index}" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-indicators">
+                                    ${carouselIndicators}
+                                </div>
+                                <div class="carousel-inner">
+                                    ${carouselItems}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">ห้อง ${roomNumber}</h5>
+                                <p class="card-text ${statusClass}">สถานะ: ${status}</p>
+                                <p class="price">฿${typeof price === 'number' ? price.toLocaleString() : price} / เดือน</p>
+								</div>
+                            <div class="card-footer clearfix">
+                                <button class="btn btn-primary btn-sm btn-details" onclick="showRoomDetails(${index})">ดูรายละเอียด</button>
+                                ${locationLink}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                roomList.innerHTML += roomCard;
+            });
+
+            filterRooms();
+        }
+
+        function filterRooms() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+
+            const roomCards = document.querySelectorAll('.room-card');
+
+            roomCards.forEach(card => {
+                const roomNumber = card.querySelector('.card-title').textContent.toLowerCase();
+                const status = card.querySelector('.card-text').textContent.toLowerCase();
+                const price = parseInt(card.querySelector('.price').textContent.replace(/[^0-9]/g, ''));
+
+                const matchesSearch = roomNumber.includes(searchTerm);
+                const matchesStatus = statusFilter === '' || status.includes(statusFilter);
+                const matchesPrice = (minPrice === '' || price >= parseInt(minPrice)) && 
+                                     (maxPrice === '' || price <= parseInt(maxPrice));
+
+                if (matchesSearch && matchesStatus && matchesPrice) {
+                    card.parentElement.style.display = '';
+                } else {
+                    card.parentElement.style.display = 'none';
+                }
+            });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString || dateString === 'ไม่ระบุ') return 'ไม่ระบุ';
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function showRoomDetails(index) {
+            const room = roomsData[index];
+            const roomNumber = room.c[0].v;
+            const price = room.c[1].v;
+            const status = room.c[2].v;
+            const roomSize = room.c[4] ? room.c[4].v : 'ไม่ระบุ';
+            const amenities = room.c[5] ? room.c[5].v : 'ไม่ระบุ';
+            const rentalStart = formatDate(room.c[6] ? room.c[6].v : 'ไม่ระบุ');
+            const rentalEnd = formatDate(room.c[7] ? room.c[7].v : 'ไม่ระบุ');
+            const latitude = room.c[8] ? room.c[8].v : null;
+            const longitude = room.c[9] ? room.c[9].v : null;
+
+            const locationLink = latitude && longitude 
+                ? `<p><a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank" class="btn btn-primary btn-sm"><i class="fas fa-map-marker-alt"></i> ดูตำแหน่งบน Google Maps</a></p>`
+                : '';
+
+            const detailContent = `
+                <h4>ห้อง ${roomNumber}</h4>
+                <p><strong>ราคา:</strong> ฿${typeof price === 'number' ? price.toLocaleString() : price} / เดือน</p>
+                <p><strong>สถานะ:</strong> ${status}</p>
+                <p><strong>ขนาดห้อง:</strong> ${roomSize}</p>
+                <p><strong>สิ่งอำนวยความสะดวก:</strong> ${amenities}</p>
+                <p><strong>ประวัติการเช่า:</strong></p>
+                <ul>
+                    <li>วันที่เริ่มต้น: ${rentalStart}</li>
+                    <li>วันที่สิ้นสุด: ${rentalEnd}</li>
+                </ul>
+                ${locationLink}
+            `;
+
+            document.getElementById('roomDetailContent').innerHTML = detailContent;
+            new bootstrap.Modal(document.getElementById('roomDetailModal')).show();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterRooms);
+        document.getElementById('statusFilter').addEventListener('change', filterRooms);
+        document.getElementById('minPrice').addEventListener('input', filterRooms);
+        document.getElementById('maxPrice').addEventListener('input', filterRooms);
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // ตรวจสอบ username และ password (ควรทำบนเซิร์ฟเวอร์จริงๆ)
+            if (username === 'admin' && password === 'password') {
+                window.location.href = 'admin.html';
+            } else {
+                alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+            }
+        });
+
+        fetchRooms();
+    </script>
+</body>
+</html>
